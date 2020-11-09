@@ -51,7 +51,7 @@ echo "get system info"
 curl -k "https://$ip/api/system?token=$token1" 2>1&
 device_id = $(curl -k "https://$ip/api/system?token=$token1" | jq -r '.result.deviceId')
 lora_username ="MTCDT-$device_id"
-
+export lora_username
 case $channelplan in
 as932-japan)
     channelplan = "AS923"
