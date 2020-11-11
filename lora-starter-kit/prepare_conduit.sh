@@ -1,7 +1,7 @@
 #! /bin/bash
 ip = "$1"
 channelplan = "$2"
-channelplan =${channelplan,,}
+##app_File = "$3"
 lbtEnabled = false
 password = "Multitech_123"
 
@@ -61,7 +61,9 @@ kr920)
     lbtEnabled = true
     ;;
 esac
-
+#####enable WiFi Accesspoint#####
+echo "Enabling Wi-Fi-AP $lora_username"
+`curl -kX PUT -H 'Content-Type: application/json' -d '{"ap":{"enabled":true,"security":{"algorithm":"TKIP","mode":"WPA2-PSK","psk":"'"$password"'"},"ssid":"'"$lora_username"'"}}' "https://$ip/api/wifi/?token=$token1}" 2>/dev/null &
 
 echo "Enabling LoRa, setting join delay to 5, channel plan to $channelplan and lbtEnabled to $lbtEnabled"
 curl -kX PUT -H "Content-Type: application/json" -d '{ "lora": { "enabled": true, "joinDelay":5, "channelPlan": "'"$channelplan"'", "lbtEnabled": "'"$lbtEnabled"'"} }' "https://$ip/api/loraNetwork?token=$token1" 2>/dev/null &
@@ -80,10 +82,14 @@ echo "Lora public  $($json | jq -r '.result.network.public')"
 echo "Lora: fsb   $($json | jq -r '.result.lora.frequencysubBand')"
 echo "Lora: enabled $($json | jq -r '.result.lora.enabled')"
 echo "Lora: joinDelay $($json | jq -r '.result.lora.joinDelay')"
-echo "Lora: channelplan $($josn | jq -r '.result.lora.channelPlan')"
+echo "Lora: channelplan $($json | jq -r '.result.lora.channelPlan')"
 echo "Lora: lbtEnabled  $($json | jq -r '.result.lora.lbtEnabled')"
 
-###Copy python app to file
+###Install python app to conduit
+##curl -k -X POST -H "Content-Type: json/application" -d '{"info":{"fileName":"'"$app_File"'","fileSize":}}' $ip/api/command/app_pre_upload?token=$token1
+##curl -i -k -b /tmp/headers --http1.0 -F file=@$app_File "https://$ip/api/command/app_upload?token=$token1"
+##curl -k -X POST -H "Content-Type: json/application" -d '{"info":{"appId":"5a8f0828feab4f747f818781","appName":"Starterkit,"appFile":"'"$app_File"'"}}' https:$ip/api/command/app_install?token=$token1
+
 
 
 echo "First time Setup"
